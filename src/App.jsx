@@ -16,9 +16,9 @@ const App = () => {
     };
 
     const CompleteTaskToggle = (e, i) => {
-        e.target.classList.toggle("bg-green-500");
-        e.target.classList.toggle("border");
-        e.target.nextSibling.classList.toggle("line-through");
+        // e.target.classList.toggle("bg-green-500");
+        // e.target.classList.toggle("border");
+        // e.target.nextSibling.classList.toggle("line-through");
 
         const copyTasks = [...tasks];
         copyTasks[i].completed = !tasks[i].completed;
@@ -40,9 +40,15 @@ const App = () => {
                     <div className="flex items-center">
                         <div
                             onClick={(e) => CompleteTaskToggle(e, index)}
-                            className="mr-4 rounded-full w-[30px] h-[30px] border border-orange-600"
+                            className={`${
+                                task.completed ? "bg-green-500" : "border"
+                            } mr-4 rounded-full w-[30px] h-[30px]  border-orange-600`}
                         ></div>
-                        <h1 className="text-2xl font-extrabold text-yellow-100">
+                        <h1
+                            className={`${
+                                task.completed && "line-through"
+                            } text-2xl font-extrabold text-yellow-100`}
+                        >
                             {task.title}
                         </h1>
                     </div>
