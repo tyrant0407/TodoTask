@@ -2,24 +2,31 @@ import { useState } from "react";
 
 const App = () => {
     const [title, settitle] = useState("");
-    const [tasks, settasks] = useState([
-        { title: "Task1", completed: false },
-        { title: "Task2", completed: false },
-    ]);
+    const [tasks, settasks] = useState([]);
     const TaskSubmitHandler = (e) => {
         e.preventDefault();
 
-        const copyTasks = [...tasks];
-        copyTasks.push({ title, completed: false });
-        settasks(copyTasks);
+        settasks([...tasks, { title: title, completed: false }]);
         settitle("");
     };
 
-    const CompleteTaskToggle = (e, i) => {
-        // e.target.classList.toggle("bg-green-500");
-        // e.target.classList.toggle("border");
-        // e.target.nextSibling.classList.toggle("line-through");
+    const DeleteHandler = (i) => {
+        const copyTasks = [...tasks];
 
+        let isValid = false;
+        if (!copyTasks[i].completed) {
+            isValid = confirm("Do you really Want to delete this Task ?");
+        }
+
+        if (isValid || copyTasks[i].completed) {
+            copyTasks.splice(i, 1);
+            settasks(copyTasks);
+        }
+
+        // settasks(tasks.filter((task,index) => index !== i))
+    };
+
+    const CompleteTaskToggle = (i) => {
         const copyTasks = [...tasks];
         copyTasks[i].completed = !tasks[i].completed;
         settasks(copyTasks);
@@ -39,7 +46,7 @@ const App = () => {
                 >
                     <div className="flex items-center">
                         <div
-                            onClick={(e) => CompleteTaskToggle(e, index)}
+                            onClick={() => CompleteTaskToggle(index)}
                             className={`${
                                 task.completed ? "bg-green-500" : "border"
                             } mr-4 rounded-full w-[30px] h-[30px]  border-orange-600`}
@@ -54,7 +61,10 @@ const App = () => {
                     </div>
                     <div className="flex gap-3 text-2xl text-yellow-100">
                         <i className="ri-file-edit-line"></i>
-                        <i className="ri-delete-bin-3-line"></i>
+                        <i
+                            onClick={() => DeleteHandler(index)}
+                            className="ri-delete-bin-3-line"
+                        ></i>
                     </div>
                 </li>
             );
