@@ -1,6 +1,8 @@
-const Show = (props) => {
-    const tasks = props.tasks;
-    const settasks = props.settasks;
+import { useContext } from "react";
+import { todocontext } from "../Context/Context";
+
+const Show = () => {
+    const [tasks, settasks] = useContext(todocontext);
 
     const DeleteHandler = (i) => {
         let isValid = false;

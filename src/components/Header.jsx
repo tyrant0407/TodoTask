@@ -1,6 +1,8 @@
-const Header = (props) => {
-    const tasks = props.tasks;
-    // const { tasks } = props;
+import { useContext } from "react";
+import { todocontext } from "../Context/Context";
+
+const Header = () => {
+    const [tasks] = useContext(todocontext);
 
     return (
         <div className="mt-[7%] w-[35%] h-[30vh] border rounded-3xl flex justify-around items-center">
