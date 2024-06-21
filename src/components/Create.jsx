@@ -1,15 +1,20 @@
 import { nanoid } from "nanoid";
 import { useState } from "react";
+import { useContext } from "react";
+import { taskscontext } from "../Context/TasksContext";
 
 const Create = (props)=>{
-    const tasks = props.tasks;
-    const settasks = props.settasks;
+    const [tasks,settasks] = useContext(taskscontext);
+
     const [title, settitle] = useState("");
     
     const SubmitHandler = (e) => {
         e.preventDefault();
+        
+      
+        
         const newtodo = { id: nanoid(), title, completed: false };
-        console.log(newtodo);
+       
 
         // const copytasks = [...tasks]
         // copytasks.push(newtodo);

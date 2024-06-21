@@ -1,8 +1,12 @@
-const Show = (props)=>{
-    const tasks=props.tasks
-    const settasks=props.settasks
+import { useContext, useState } from "react";
+import { taskscontext } from "../Context/TasksContext";
+
+const Show = () => {
+    const [tasks, settasks] = useContext(taskscontext);
+    const [editIndex, setEditIndex] = useState(null);
+    const [editTitle, setEditTitle] = useState("");
+
     const CompleteHandler = (index) => {
-        console.log(index);
         const copyTasks = [...tasks];
         copyTasks[index].completed = !copyTasks[index].completed;
         settasks(copyTasks);
@@ -10,18 +14,33 @@ const Show = (props)=>{
     };
 
     const DeleteHandler = (id) => {
-        settasks(tasks.filter((t) => t.id != id));
-        localStorage.setItem(
-            "tasks",
-            JSON.stringify(tasks.filter((t) => t.id != id))
-        );
+        const updatedTasks = tasks.filter((t) => t.id != id);
+        settasks(updatedTasks);
+        localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     };
 
-    return(
-        <ul className="list-none w-[35%] ">
-        {tasks.length > 0 ? (
-            tasks.map((task, index) => {
-                return (
+    const EditHandler = (index) => {
+        setEditIndex(index);
+        setEditTitle(tasks[index].title);
+    };
+
+    const UpdateHandler = (index) => {
+        if (editTitle.trim() === "") {
+            return; // Prevent updating a task if the title is blank
+        }
+
+        const updatedTasks = [...tasks];
+        updatedTasks[index].title = editTitle;
+        settasks(updatedTasks);
+        localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+        setEditIndex(null);
+        setEditTitle("");
+    };
+
+    return (
+        <ul className="list-none w-[35%]">
+            {tasks.length > 0 ? (
+                tasks.map((task, index) => (
                     <li
                         key={task.id}
                         className="mb-5 flex justify-between items-center border rounded-xl p-5"
@@ -30,35 +49,50 @@ const Show = (props)=>{
                             <div
                                 onClick={() => CompleteHandler(index)}
                                 className={`${
-                                    task.completed
-                                        ? "bg-green-600"
-                                        : "border"
-                                } mr-4 rounded-full w-[30px] h-[30px]  border-orange-600`}
+                                    task.completed ? "bg-green-600" : "border"
+                                } mr-4 rounded-full w-[30px] h-[30px] border-orange-600`}
                             ></div>
-                            <h1
-                                className={`${
-                                    task.completed ? "line-through" : ""
-                                } text-2xl font-extrabold text-yellow-100`}
-                            >
-                                {task.title}
-                            </h1>
+                            {editIndex === index ? (
+                                <input
+                                    type="text"
+                                    value={editTitle}
+                                    onChange={(e) => setEditTitle(e.target.value)}
+                                    onBlur={() => UpdateHandler(index)}
+                                    onKeyPress={(e) => {
+                                        if (e.key === "Enter") {
+                                            UpdateHandler(index);
+                                        }
+                                    }}
+                                    className="text-2xl font-extrabold text-black outline-none rounded-md"
+                                />
+                            ) : (
+                                <h1
+                                    className={`${
+                                        task.completed ? "line-through" : ""
+                                    } text-2xl font-extrabold text-yellow-100`}
+                                >
+                                    {task.title}
+                                </h1>
+                            )}
                         </div>
                         <div className="flex gap-3 text-2xl text-yellow-100">
-                            <i className="ri-file-edit-line"></i>
+                            <i
+                                onClick={() => EditHandler(index)}
+                                className="ri-file-edit-line"
+                            ></i>
                             <i
                                 onClick={() => DeleteHandler(task.id)}
                                 className="ri-delete-bin-3-line"
                             ></i>
                         </div>
                     </li>
-                );
-            })
-        ) : (
-            <h1 className="mt-10 w-full text-center text-orange-600 text-3xl">
-                No Pending Tasks
-            </h1>
-        )}
-    </ul>
+                ))
+            ) : (
+                <h1 className="mt-10 w-full text-center text-orange-600 text-3xl">
+                    No Pending Tasks
+                </h1>
+            )}
+        </ul>
     );
 }
 
